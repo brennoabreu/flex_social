@@ -1,0 +1,15 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  db-flex-social:
+    image: 'bitnami/mysql:latest'
+    ports:
+      - '3306:3306'
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=db-flex-social
+      - MYSQL_ROOT_USER=root
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=docker
