@@ -8,4 +8,4 @@ app.use(express.json())
 
 app.use(routes);
 
-app.listen(env.PORT, () => `Server running on port ${env.PORT}`)
+app.listen(env.PORT, () => {console.log(`Server running on port ${env.PORT}`)})
