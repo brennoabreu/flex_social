@@ -91,7 +91,56 @@ Neste guia iremos mostrar o passo a passo para preparar o seu ambiente.
 
 ## Rodando o back end
 
+Clone este repositório
+```sh
+git clone https://github.com/talissonbruno/project_flex_social.git
+```
 
+Acesse a pasta do projeto no terminal
+```sh
+cd project_flex_social
+```
+Vá para a pasta server
+```sh
+cd server
+```
+Instale as dependências
+```sh
+npm install
+```
+
+Primeira vez que for executar o projeto, é necessário criar o container no Docker
+> Crie container 
+```bash
+docker compose up -d
+```
+Se o container já foi criado, execute o comonado abaixo 
+```bash
+docker start <nome_do_container> 
+```
+Crie o arquivo .env 
+```
+#Port do servidor
+NODE_ENV=development
+PORT=3333
+
+#Configuração do banco de dados
+DB_CLIENT="MYSQL"
+DB_HOST="localhost"
+DB_PORT=3306
+DB_USER=docker
+DB_PASSWORD=docker
+DB_DATABASE=db-flex-social
+```
+
+
+
+Execute a aplicação em modo de desenvolvimento
+```sh
+npm run dev
+```
+O resultado 
+ - O servidor inciará na porta:3333 - acesse <http://localhost:3333> 
 
 
 ## Colaboradores
