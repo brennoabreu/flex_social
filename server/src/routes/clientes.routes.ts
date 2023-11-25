@@ -34,10 +34,10 @@ clientesRoutes.post('/', async (request, response) => {
 
     const query = `INSERT INTO TBLCLIENTE (empresa,nome,email,cpf,cnpj,tipo,dtnascimento)
                    VALUES ('${empresa}', '${name}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}');`;
-    const insertId = await executaQuery(query) as {insertId:number}[];
-    return response.status(201).json({ "codigo": insertId});
+    const {insertId} = await executaQuery(query) as unknown as { insertId:number;};
+    return response.status(201).json({ codigo: insertId });
   } catch ( error ) {
-    throw new AppError('Parametro invalido;', 500);
+    throw new AppError('Erro na inserção de dados;', 500);
  }
 });
 
