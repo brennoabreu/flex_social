@@ -21,6 +21,10 @@ app.use((err: Error, request:Request, response:Response, _: NextFunction) =>{
   });
 });
 
+app.get('/', (request, response) => {
+  response.json('API ativa');
+})
+
 app.listen(env.PORT, () => {
   console.log(`Server running on port ${env.PORT}`);
 });
