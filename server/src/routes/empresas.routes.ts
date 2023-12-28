@@ -6,9 +6,28 @@ const empresasRoutes = Router();
 
 empresasRoutes.post('/', async (request, response) => {
   try{
-    const { name, email, cpfcnpj, tipo } = request.body;
+    const {
+      cnpjcpf,
+      razaosocial,
+      tipo,
+      inscricaoestadual,
+      nomefantasia,
+      regimetributario,
+      site,
+      email,
+      telefone,
+      celular,
+      whatsapp,
+      estado,
+      cidade,
+      endereco,
+      numero,
+      bairro,
+      complemnto,
+      cep
+    } = request.body;
 
-    if (!name) {
+    if (!razaosocial) {
       throw new AppError('Nome da empresa vazio.',404);
     }
 
@@ -16,12 +35,12 @@ empresasRoutes.post('/', async (request, response) => {
       throw new AppError('E-mail do empresa vazio.',404);
     }
 
-    if (!cpfcnpj) {
+    if (!cnpjcpf) {
       throw new AppError('CPF/CNPJ do empresa vazio.',404);
     }
 
-    const query = `INSERT INTO TBLEMPRESA (nome,email,cpfcnpj,tipo)
-                   VALUES ('${name}','${email}','${cpfcnpj}', '${tipo}');`;
+    const query = `INSERT INTO TBLEMPRESA (CNPJCPF, RAZAOSOCIAL, TIPO, INSCRICAOESTADUAL, NOMEFANTASIA, REGIMETRIBUTARIO, SITE, EMAIL, TELEFONE, CELULAR, WHATSAPP, ESTADO, CIDADE, ENDERECO, NUMERO, BAIRRO, COMPLEMNTO, CEP)
+                   VALUES ('${cnpjcpf}','${razaosocial}','${tipo}', '${inscricaoestadual}', '${nomefantasia}','${regimetributario}', '${site}', '${email}', '${telefone}', '${celular}', '${whatsapp}', '${estado}', '${cidade}', '${endereco}', '${numero}', '${bairro}', '${complemnto}', '${cep}');`;
     const {insertId} = await executaQuery(query) as unknown as { insertId:number;};
     return response.status(201).json({ codigo: insertId });
   } catch ( error ) {
@@ -32,9 +51,16 @@ empresasRoutes.post('/', async (request, response) => {
 empresasRoutes.get('/', async (request, response) => {
    try{
     const query = `SELECT * FROM TBLEMPRESA`;
-    console.log(query);
-    const empresa = await executaQuery(query);
-    return response.status(200).json(empresa);
+    const empresas = await executaQuery(query);
+    // Convertendo as letras maiúsculas para minúsculas
+    const empresasLowerCase = empresas.map(empresa => {
+      const empresaLowerCase: { [key: string]: any } = {};
+      Object.keys(empresa).forEach(key => {
+        empresaLowerCase[key.toLowerCase()] = empresa[key];
+      });
+      return empresaLowerCase;
+    });
+    return response.status(200).json(empresasLowerCase);
    } catch ( error ) {
     throw new AppError('Parametro invalido;', 500);
   }
