@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { executaQuery } from '../database';
 import AppError from '../errors/AppError';
-import { number } from 'zod';
 
 const clientesRoutes = Router();
 
