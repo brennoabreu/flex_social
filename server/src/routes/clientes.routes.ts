@@ -33,6 +33,7 @@ clientesRoutes.post('/', async (request, response) => {
 
     const query = `INSERT INTO TBLCLIENTE (empresa,nome,email,cpf,cnpj,tipo,dtnascimento)
                    VALUES ('${empresa}', '${name}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}');`;
+    console.log(query);
     const {insertId} = await executaQuery(query) as unknown as { insertId:number;};
     return response.status(201).json({ codigo: insertId });
   } catch ( error ) {
