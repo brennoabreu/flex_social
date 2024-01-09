@@ -16,12 +16,12 @@ clientesRoutes.get('/', async (request, response) => {
 
 clientesRoutes.post('/', async (request, response) => {
   try{
-    const { empresa, name, email, cpf, cnpj, tipo, dtnascimento } = request.body;
+    const { empresa, nome, email, cpf, cnpj, tipo, dtnascimento } = request.body;
 
     if (!empresa) {
       throw new AppError('Nome do cliente vazio.',404);
     }
-    if (!name) {
+    if (!nome) {
       throw new AppError('Nome do cliente vazio.',404);
     }
     if (!email) {
@@ -32,7 +32,7 @@ clientesRoutes.post('/', async (request, response) => {
     }
 
     const query = `INSERT INTO TBLCLIENTE (empresa,nome,email,cpf,cnpj,tipo,dtnascimento)
-                   VALUES ('${empresa}', '${name}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}');`;
+                   VALUES ('${empresa}', '${nome}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}');`;
     console.log(query);
     const {insertId} = await executaQuery(query) as unknown as { insertId:number;};
     return response.status(201).json({ codigo: insertId });
