@@ -33,7 +33,7 @@ clientesRoutes.post('/', async (request, response) => {
 
     const query = `INSERT INTO TBLCLIENTE (empresa,nome,email,cpf,cnpj,tipo,dtnascimento)
                    VALUES ('${empresa}', '${nome}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}');`;
-    console.log(query);
+
     const {insertId} = await executaQuery(query) as unknown as { insertId:number;};
     return response.status(201).json({ codigo: insertId });
   } catch ( error ) {
@@ -70,7 +70,23 @@ clientesRoutes.get('/:id', async (request, response) => {
     if (!id) {
       throw new AppError('Parametro invalido;', 404);
     }
-    const query = `SELECT * FROM TBLCLIENTE WHERE TBLCLIENTE.ID = ${id}`;
+    const query = `SELECT * FROM TBLCLIENTE
+                  WHERE TBLCLIENTE.ID = ${id}`;
+    const cliente = await executaQuery(query);
+    return response.status(200).json(cliente);
+  } catch ( error ) {
+    throw new AppError('Parametro invalido;', 500);
+  }
+});
+
+clientesRoutes.get('/teste/:empresa', async (request, response) => {
+  try{
+    const { empresa } = request.params;
+    if (!empresa) {
+      throw new AppError('Parametro invalido;', 404);
+    }
+    const query = `SELECT * FROM TBLCLIENTE
+                  WHERE TBLCLIENTE.EMPRESA = ${empresa}`;
     const cliente = await executaQuery(query);
     return response.status(200).json(cliente);
   } catch ( error ) {
