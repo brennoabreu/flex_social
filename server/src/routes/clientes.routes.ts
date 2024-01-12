@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { executaQuery } from '../database';
 import AppError from '../errors/AppError';
-import { number } from 'zod';
 
 const clientesRoutes = Router();
 
@@ -17,12 +16,12 @@ clientesRoutes.get('/', async (request, response) => {
 
 clientesRoutes.post('/', async (request, response) => {
   try{
-    const { empresa, name, email, cpf, cnpj, tipo, dtnascimento } = request.body;
+    const { empresa, nome, email, cpf, cnpj, tipo, dtnascimento } = request.body;
 
     if (!empresa) {
       throw new AppError('Nome do cliente vazio.',404);
     }
-    if (!name) {
+    if (!nome) {
       throw new AppError('Nome do cliente vazio.',404);
     }
     if (!email) {
@@ -33,7 +32,8 @@ clientesRoutes.post('/', async (request, response) => {
     }
 
     const query = `INSERT INTO TBLCLIENTE (empresa,nome,email,cpf,cnpj,tipo,dtnascimento)
-                   VALUES ('${empresa}', '${name}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}');`;
+                   VALUES ('${empresa}', '${nome}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}');`;
+
     const {insertId} = await executaQuery(query) as unknown as { insertId:number;};
     return response.status(201).json({ codigo: insertId });
   } catch ( error ) {
@@ -70,7 +70,23 @@ clientesRoutes.get('/:id', async (request, response) => {
     if (!id) {
       throw new AppError('Parametro invalido;', 404);
     }
-    const query = `SELECT * FROM TBLCLIENTE WHERE TBLCLIENTE.ID = ${id}`;
+    const query = `SELECT * FROM TBLCLIENTE
+                  WHERE TBLCLIENTE.ID = ${id}`;
+    const cliente = await executaQuery(query);
+    return response.status(200).json(cliente);
+  } catch ( error ) {
+    throw new AppError('Parametro invalido;', 500);
+  }
+});
+
+clientesRoutes.get('/teste/:empresa', async (request, response) => {
+  try{
+    const { empresa } = request.params;
+    if (!empresa) {
+      throw new AppError('Parametro invalido;', 404);
+    }
+    const query = `SELECT * FROM TBLCLIENTE
+                  WHERE TBLCLIENTE.EMPRESA = ${empresa}`;
     const cliente = await executaQuery(query);
     return response.status(200).json(cliente);
   } catch ( error ) {
