@@ -27,19 +27,14 @@ empresasRoutes.post('/', async (request, response) => {
       cep
     } = request.body;
 
-    if (!razaosocial) {
-      throw new AppError('Nome da empresa vazio.',404);
-    }
+    if (!razaosocial) throw new AppError('Nome da empresa vazio.',404);
 
-    if (!email) {
-      throw new AppError('E-mail do empresa vazio.',404);
-    }
+    if (!email) throw new AppError('E-mail do empresa vazio.',404);
 
-    if (!cnpjcpf) {
-      throw new AppError('CPF/CNPJ do empresa vazio.',404);
-    }
+    if (!cnpjcpf) throw new AppError('CPF/CNPJ do empresa vazio.',404);
+    
 
-    const query = `INSERT INTO TBLEMPRESA (CNPJCPF, RAZAOSOCIAL, TIPO, INSCRICAOESTADUAL, NOMEFANTASIA, REGIMETRIBUTARIO, SITE, EMAIL, TELEFONE, CELULAR, WHATSAPP, ESTADO, CIDADE, ENDERECO, NUMERO, BAIRRO, COMPLEMNTO, CEP)
+    const query = `INSERT INTO tblempresa (CNPJCPF, RAZAOSOCIAL, TIPO, INSCRICAOESTADUAL, NOMEFANTASIA, REGIMETRIBUTARIO, SITE, EMAIL, TELEFONE, CELULAR, WHATSAPP, ESTADO, CIDADE, ENDERECO, NUMERO, BAIRRO, COMPLEMNTO, CEP)
                    VALUES ('${cnpjcpf}','${razaosocial}','${tipo}', '${inscricaoestadual}', '${nomefantasia}','${regimetributario}', '${site}', '${email}', '${telefone}', '${celular}', '${whatsapp}', '${estado}', '${cidade}', '${endereco}', '${numero}', '${bairro}', '${complemnto}', '${cep}');`;
     const {insertId} = await executaQuery(query) as unknown as { insertId:number;};
     return response.status(201).json({ codigo: insertId });
@@ -50,7 +45,7 @@ empresasRoutes.post('/', async (request, response) => {
 
 empresasRoutes.get('/', async (request, response) => {
    try{
-    const query = `SELECT * FROM TBLEMPRESA`;
+    const query = `SELECT * FROM tblempresa`;
     const empresas = await executaQuery(query);
     // Convertendo as letras maiúsculas para minúsculas
     const empresasLowerCase = empresas.map(empresa => {
