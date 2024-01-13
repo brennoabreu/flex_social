@@ -18,6 +18,7 @@ clientesRoutes.get('/', async (request, response) => {
 
 
 clientesRoutes.post('/', async (request, response) => {
+<<<<<<< HEAD
 
   try {
     const { empresa, nome, email, cpf, cnpj, tipo, dtnascimento, ativo, fkidempresa, fkidprojeto} = request.body;
@@ -41,6 +42,28 @@ clientesRoutes.post('/', async (request, response) => {
                    VALUES ('${empresa}', '${nome}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}', '${ativo}', '${fkidempresa}', '${fkidprojeto}');`;
     console.log(query);
     const { insertId } = await executaQuery(query) as unknown as { insertId: number; };
+=======
+  try{
+    const { empresa, nome, email, cpf, cnpj, tipo, dtnascimento } = request.body;
+
+    if (!empresa) {
+      throw new AppError('Nome do cliente vazio.',404);
+    }
+    if (!nome) {
+      throw new AppError('Nome do cliente vazio.',404);
+    }
+    if (!email) {
+      throw new AppError('E-mail do cliente vazio.',404);
+    }
+    if (!dtnascimento) {
+      throw new AppError('Data de nascimento do cliente vazio.',404);
+    }
+
+    const query = `INSERT INTO TBLCLIENTE (empresa,nome,email,cpf,cnpj,tipo,dtnascimento)
+                   VALUES ('${empresa}', '${nome}','${email}','${cpf}', '${cnpj}', '${tipo}','${dtnascimento}');`;
+
+    const {insertId} = await executaQuery(query) as unknown as { insertId:number;};
+>>>>>>> 06ffafedfe28d0418750479a6aaf9efdc76cf1a7
     return response.status(201).json({ codigo: insertId });
 
   } catch (error) {
@@ -74,9 +97,32 @@ clientesRoutes.put('/:id', async (request, response) => {
 clientesRoutes.get('/:id', async (request, response) => {
   try {
     const { id } = request.params;
+<<<<<<< HEAD
     if (!id) throw new AppError('Parametro invalido;', 404);
 
     const query = `SELECT * FROM tblcliente WHERE tblcliente.id = ${id}`;
+=======
+    if (!id) {
+      throw new AppError('Parametro invalido;', 404);
+    }
+    const query = `SELECT * FROM TBLCLIENTE
+                  WHERE TBLCLIENTE.ID = ${id}`;
+    const cliente = await executaQuery(query);
+    return response.status(200).json(cliente);
+  } catch ( error ) {
+    throw new AppError('Parametro invalido;', 500);
+  }
+});
+
+clientesRoutes.get('/teste/:empresa', async (request, response) => {
+  try{
+    const { empresa } = request.params;
+    if (!empresa) {
+      throw new AppError('Parametro invalido;', 404);
+    }
+    const query = `SELECT * FROM TBLCLIENTE
+                  WHERE TBLCLIENTE.EMPRESA = ${empresa}`;
+>>>>>>> 06ffafedfe28d0418750479a6aaf9efdc76cf1a7
     const cliente = await executaQuery(query);
     return response.status(200).json(cliente);
   } catch (error) {
