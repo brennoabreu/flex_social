@@ -1,36 +1,38 @@
 import { Router } from 'express';
-import { executaQuery } from '../database';
+import { executaQuery, transformarMinusculo } from '../database';
 import AppError from '../errors/AppError';
-
 
 const programasRouter = Router();
 
-programasRouter.get('/', async (request, response) => {
-  try {
-    const query = `select * from tblprograma`;
-    const programa = await executaQuery(query);
-    return response.status(200).json(programa);
-  } catch (error) {
-    throw new AppError('Parametro invalido;', 500);
-  }
-});
-
-
+// programasRouter.get('/', async (request, response) => {
+//   try {
+//     const query = `SELECT * FROM TBLPROGRAMA`;
+//     const programa = await executaQuery(query);
+//     return response.status(200).json(programa);
+//   } catch (error) {
+//     throw new AppError('Parametro invalido;', 500);
+//   }
+// });
 
 programasRouter.post('/', async (request, response) => {
 
   try {
+    const {nome, descricao, empresa } = request.body;
 
-    const {nome, descricao,fkidempresa } = request.body;
+    if (!nome) {
+      throw new AppError('Informe o nome do projeto, parametro vazio!', 404);
+    }
 
-    if (!nome) throw new AppError('Nome do projeto vazio!', 404);
+    if (!descricao) {
+      throw new AppError(`Informe a descriação, parametro vazio!`, 404);
+    }
 
-    if (!descricao) throw new AppError(`Data inicial vazio!`, 404);
+    if (!empresa) {
+      throw new AppError('Informe a empresa, parametro vazio!', 404);
+    }
 
-    if (!fkidempresa) throw new AppError('Campo idempresa vazio!', 404);
-
-    const query = `INSERT INTO tblprograma(nome, descricao, fkidempresa) VALUES ('${nome}','${descricao}','${fkidempresa}');`;
-    console.log(query);
+    const query = `INSERT INTO TBLPROGRAMA(nome, descricao, empresa)
+                   VALUES ('${nome}','${descricao}','${empresa}');`;
 
     const { insertId } = await executaQuery(query) as unknown as { insertId: number; };
     return response.status(201).json({ codigo: insertId });
@@ -41,23 +43,27 @@ programasRouter.post('/', async (request, response) => {
 
 });
 
-
-
-programasRouter.put('/:id', async (request, response) => {
+programasRouter.put('/', async (request, response) => {
   try {
-    const { nome, descricao, fkidempresa} = request.body;
-    const { id } = request.params;
+    const {nome, descricao} = request.body;
+    const { id, empresa } = request.query;
 
-    if (!nome) throw new AppError('Nome do projeto vazio!', 404);
+    if (!id) {
+      throw new AppError('Parametro invalido;', 404);
+    }
+    if (!empresa) {
+      throw new AppError('Parametro invalido;', 404);
+    }
 
-    if (!descricao) throw new AppError(`Data inicial vazio!`, 404);
+    if (!nome) {
+      throw new AppError('Nome do projeto vazio!', 404);
+    }
 
-    if (!fkidempresa) throw new AppError('Campo idempresa vazio!', 404);
+    if (!descricao) {
+      throw new AppError(`Descrição  vazio!`, 404);
+    }
 
-    if (!id) throw new AppError('Parametro invalido;', 404);
-
-    const query = `UPDATE tblprograma SET nome = '${nome}', descricao = '${descricao}', fkidempresa = '${fkidempresa}' WHERE id = ${id};`;
-
+    const query = `UPDATE TBLPROGRAMA SET nome = '${nome}', descricao = '${descricao}' WHERE id = ${id} and empresa = ${empresa};`;
     await executaQuery(query);
     return response.status(203).json({ "codigo": id });
   } catch (error) {
@@ -65,27 +71,44 @@ programasRouter.put('/:id', async (request, response) => {
   }
 });
 
-programasRouter.get('/:id', async (request, response) => {
+programasRouter.get('/', async (request, response) => {
   try {
-    const { id } = request.params;
+    const { id, empresa } = request.query;
+    let query = '';
+    if((id) && (empresa)) {
+      query = `SELECT * FROM TBLPROGRAMA
+                      WHERE TBLPROGRAMA.EMPRESA = '${empresa}'
+                        AND TBLPROGRAMA.ID = ${id}`;
 
-    if (!id) throw new AppError('Parametro invalido;', 404);
+    } else if(empresa) {
+      query = `SELECT * FROM TBLPROGRAMA
+                      WHERE TBLPROGRAMA.EMPRESA = '${empresa}'`;
 
-    const query = `SELECT * FROM tblprograma WHERE tblprograma.id = ${id}`;
-    const programa = await executaQuery(query);
-    return response.status(200).json(programa);
+    };
+
+    if (query !== '') {
+      const programa = await executaQuery(query);
+      const resultado = programa.map(transformarMinusculo);
+      return response.status(200).json(resultado);
+    }
+    return response.status(200).json([]);
   } catch (error) {
     throw new AppError('Parametro invalido;', 500);
   }
 });
 
-programasRouter.delete('/:id', async (request, response) => {
+programasRouter.delete('/', async (request, response) => {
   try {
-    const { id } = request.params;
+    const { id, empresa } = request.query;
 
-    if (!id)throw new AppError('Parametro invalido;', 404);
+    if (!id) {
+      throw new AppError('Parametro invalido;', 404);
+    }
+    if (!empresa) {
+      throw new AppError('Parametro invalido;', 404);
+    }
 
-    const query = `DELETE FROM tblprograma WHERE tblprograma.id = ${id}`;
+    const query = `DELETE FROM TBLPROGRAMA WHERE TBLPROGRAMA.id = ${id} AND TBLPROGRAMA.empresa = ${empresa}`;
     await executaQuery(query);
     return response.status(200).json({ mensagem: "sucesso" }).status(200);
   } catch (error) {
