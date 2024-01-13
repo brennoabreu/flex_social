@@ -63,7 +63,7 @@ programasRouter.put('/', async (request, response) => {
       throw new AppError(`Descrição  vazio!`, 404);
     }
 
-    const query = `UPDATE TBLPROGRAMA SET nome = '${nome}', descricao = '${descricao}' WHERE id = ${id} and empresa = ${empresa};`;
+    const query = `UPDATE TBLPROGRAMA SET nome = '${nome}', descricao = '${descricao}' WHERE id = ${id} and empresa = '${empresa}';`;
     await executaQuery(query);
     return response.status(203).json({ "codigo": id });
   } catch (error) {
@@ -108,7 +108,7 @@ programasRouter.delete('/', async (request, response) => {
       throw new AppError('Parametro invalido;', 404);
     }
 
-    const query = `DELETE FROM TBLPROGRAMA WHERE TBLPROGRAMA.id = ${id} AND TBLPROGRAMA.empresa = ${empresa}`;
+    const query = `DELETE FROM TBLPROGRAMA WHERE TBLPROGRAMA.id = ${id} AND TBLPROGRAMA.empresa = '${empresa}'`;
     await executaQuery(query);
     return response.status(200).json({ mensagem: "sucesso" }).status(200);
   } catch (error) {
