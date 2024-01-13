@@ -30,8 +30,14 @@ export const executaQuery = async ( sql: string): Promise<any[]> => {
   const [retorno] = await db.execute(sql);
   await db.end();
   return retorno as any[];
-
 }
 
+export function transformarMinusculo(obj: { [key: string]: any }): { [key: string]: any } {
+  const objetoLowerCase: { [key: string]: any } = {};
 
+  Object.keys(obj).forEach(key => {
+    objetoLowerCase[key.toLowerCase()] = obj[key];
+  });
 
+  return objetoLowerCase;
+}
