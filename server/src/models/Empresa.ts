@@ -1,74 +1,72 @@
-//import {Column, CreateDateColumn, Entity, PrimaryColumn, Table, UpdateDateColumn }
-//from
+import Entidade from '../database/Entidade';
+import { ChavePrimaria, Coluna, Tabela } from '../database/decorador'
+@Tabela({ nome: 'TBLEMPRESA'})
+class Empresa extends Entidade{
+   @ChavePrimaria()
+   id: number;
 
-// @Entity('TBLEMPRESA')
-// class Empresa{
-//    @PrimaryColumn()
-//    id: number;
+   @Coluna()
+   cnpjcpf: string;
 
-//    @Column()
-//    cnpjcpf: string;
+   @Coluna()
+   razaoSocial: string;
 
-//    @Column()
-//    razaoSocial: string;
+   @Coluna()
+   tipo: 'F'|'J';
 
-//    @Column()
-//    tipo: 'F'|'J';
+   @Coluna()
+   inscricaoEstadual:string;
 
-//    @Column()
-//    inscricaoEstadual:string;
+   @Coluna()
+   nomeFantasia: string;
 
-//    @Column()
-//    nomeFantasia: string;
+   @Coluna()
+   regimeTributario: string;
 
-//    @Column()
-//    regimeTributario: string;
+   @Coluna()
+   site: string;
 
-//    @Column()
-//    site: string;
+   @Coluna()
+   email: string;
 
-//    @Column()
-//    email: string;
+   @Coluna()
+   telefone: string;
 
-//    @Column()
-//    telefone: string;
+   @Coluna()
+   celular: string;
 
-//    @Column()
-//    celular: string;
+   @Coluna()
+   estado: string;
 
-//    @Column()
-//    whastapp: string;
+   @Coluna()
+   cidade: string;
 
-//    @Column()
-//    estado: string;
+   @Coluna()
+   endereco: string;
 
-//    @Column()
-//    cidade: string;
+   @Coluna()
+   numero: string;
 
-//    @Column()
-//    endereco: string;
+   @Coluna()
+   bairro: string;
 
-//    @Column()
-//    numero: string;
+   @Coluna()
+   complemento: string;
 
-//    @Column()
-//    bairro: string;
+   @Coluna()
+   cep: string;
 
-//    @Column()
-//    complemento: string;
+   @Coluna()
+   sistema: '00000001';
 
-//    @Column()
-//    cep: string;
+   @Coluna({ somenteLeitura: true })
+   ativo?: 'S'|'N';
 
-//    @Column()
-//    sistema: '00000001';
+   @Coluna({ somenteLeitura: true })
+   dtCriado?: Date;
 
-//    @CreateDateColumn()
-//    dtCriado: Date;
+   @Coluna({ somenteLeitura: true })
+   dtAlteracao?: Date;
+};
 
-//    @UpdateDateColumn()
-//    dtAlteracao: Date;
-
-// };
-
-// export default Empresa;
+export default Empresa;

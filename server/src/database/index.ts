@@ -1,5 +1,14 @@
 import mysql from 'mysql2/promise';
 import { env } from '../env';
+import Entidade from './Entidade';
+import { construirInsert, converteObjeto } from './utils';
+
+export type Origem = 'CLIENTE'|'API';
+interface Resposta {
+  chave?: any;
+  situacao: 'OK' | 'ERRO';
+  mensagem?: string;
+}
 
 const config = {
   client: env.DB_CLIENT,
@@ -25,12 +34,47 @@ export async function conexao() {
   return connection;
 }
 
-// export const executaQuery = async (sql: string): Promise<any[]> => {
-//   const db = await conexao();
-//   const [retorno] = await db.execute(sql);
-//   await db.end();
-//   return retorno as any[];
-// }
+export const executaInsert = async (
+  Classe: any,
+  objeto: Entidade,
+  origem: Origem = 'CLIENTE',
+): Promise<Resposta | Resposta[]> => {
+  let sqlInsert = '';
+  let objetoInsert;
+
+  if (Array.isArray(objeto)) {
+    objetoInsert = converteObjeto(objeto, Classe);
+  } else {
+    objetoInsert = [converteObjeto(objeto, Classe)];
+  }
+
+  const sql = new Map();
+  if (sql.has('INSERT')) {
+    sqlInsert = sql.get('INSERT');
+  } else {
+    sqlInsert = '';
+  }
+  sqlInsert += construirInsert(Classe, objetoInsert, origem);
+  sql.set('INSERT', sqlInsert);
+  sqlInsert = `${sql.get('INSERT')};`;
+
+  const db = await conexao();
+  await db.query(sqlInsert);
+  await db.end();
+  const resposta: Resposta = {
+    situacao: 'OK',
+  };
+  return resposta;
+};
+
+export const dateFormat = 'yyyy.MM.dd HH:mm:ss.SSS';
+
+export const executaQuery = async (sql: string): Promise<any[]> => {
+  const db = await conexao();
+  const [retorno] = await db.execute(sql);
+  await db.end();
+  return retorno as any[];
+}
 
 // export function transformarMinusculo(obj: { [key: string]: any }): { [key: string]: any } {
 //   const objetoLowerCase: { [key: string]: any } = {};

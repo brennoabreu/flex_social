@@ -1,8 +1,24 @@
-// import { Router } from 'express';
-// import AppError from '../errors/AppError';
-// import { executaQuery } from '../database';
+import { Router } from 'express';
+import AppError from '../errors/AppError';
+import Empresa from '../models/Empresa';
+import { executaInsert } from '../database/index';
+import garantirAutenticacao from '../middlewares/garantirAutenticacao';
 
-// const empresasRoutes = Router();
+const empresasRoutes = Router();
+
+empresasRoutes.use(garantirAutenticacao);
+
+empresasRoutes.post('/', async (request, response) => {
+  try {
+    const empresas: Empresa[] = request.body;
+    const resposta = await executaInsert(Empresa, empresas);
+    return response.json(resposta);
+  } catch ( error ) {
+    throw new AppError('Erro na inserção de dados;', 400);
+  }
+});
+
+export default empresasRoutes;
 
 // empresasRoutes.post('/', async (request, response) => {
 //   try{
@@ -66,4 +82,4 @@
 //   }
 // });
 
-// export default empresasRoutes;
+
