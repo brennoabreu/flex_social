@@ -65,8 +65,36 @@ export const converteObjeto = <T extends Entidade | Entidade[] = any>(dados: any
   return objeto as any;
 };
 
-export const construirInsert = (Classe: any, objeto: Entidade, origem: Origem = 'CLIENTE', somenteValores = false): string => {
+
+/*
+export const construirSelect = (Classe: any, origem: Origem = 'CLIENTE'): string => {
   const tabela: OpcoesTabela = Reflect.getOwnMetadata('Tabela', Classe);
+  const camposSelect = retornaCampos(Classe, origem,'SELECT');
+
+  console.log(tabela);
+  console.log(camposSelect);
+
+  return `SELECT ${camposSelect} FROM ${tabela.nome}`;
+};*/
+
+export const construirSelect = (Classe: any, objeto: Entidade, origem: Origem='CLIENTE'): string => {
+
+  console.log("Classe -> ", Classe);
+  const tabela: OpcoesTabela = Reflect.getOwnMetadata('Tabela', Classe);
+  console.log("tabela -> ", tabela);
+
+  const camposSelect = retornaCampos(Classe, origem, 'SELECT');
+  console.log("camposSelect -> ", camposSelect);
+
+  return `SELECT ${camposSelect} FROM ${tabela.nome}`;
+};
+
+
+export const construirInsert = (Classe: any, objeto: Entidade, origem: Origem = 'CLIENTE', somenteValores = false): string => {
+  console.log("Classe -> ", Classe);
+  const tabela: OpcoesTabela = Reflect.getOwnMetadata('Tabela', Classe);
+
+  console.log("tabela -> ",tabela);
   const camposInsert = retornaCampos(Classe, origem, 'INSERT');
   const camposUpdate = retornaCampos(Classe, origem, 'UPDATE');
 
@@ -89,11 +117,11 @@ export const construirInsert = (Classe: any, objeto: Entidade, origem: Origem = 
 };
 
 
-export const retornaCampos = (Classe: any, origem: Origem, operacao: 'INSERT' | 'UPDATE' = 'INSERT'): string => {
+export const retornaCampos = (Classe: any, origem: Origem, operacao: 'INSERT' | 'UPDATE' | 'SELECT' = 'INSERT'): string => {
   let campos = '';
   const chavePrimaria = Reflect.getOwnMetadata('ChavePrimaria', Classe);
   Object.keys(chavePrimaria).forEach(campo => {
-    if (operacao === 'INSERT') {
+    if (operacao === 'INSERT' || operacao === 'SELECT') {
       campos += `${campo}, `;
     } else {
       campos += `${campo} = ${campo}, `;

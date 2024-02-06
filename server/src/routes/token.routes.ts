@@ -22,5 +22,4 @@ tokenRouter.post('/', async (request, response) => {
     token,
   });
 });
-
 export default tokenRouter;

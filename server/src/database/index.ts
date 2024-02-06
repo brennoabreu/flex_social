@@ -1,7 +1,9 @@
 import mysql from 'mysql2/promise';
 import { env } from '../env';
 import Entidade from './Entidade';
-import { construirInsert, converteObjeto } from './utils';
+import { construirInsert, construirSelect, converteObjeto } from './utils';
+import AppError from '../errors/AppError';
+
 
 export type Origem = 'CLIENTE'|'API';
 interface Resposta {
@@ -34,6 +36,18 @@ export async function conexao() {
   return connection;
 }
 
+export const executaSelect = async (Classe: any, objeto: Entidade, origem: Origem = 'CLIENTE',): Promise<Resposta | Resposta[]> => {
+
+  let objetoSelect;
+  if (Array.isArray(objeto)) {
+    objetoSelect = converteObjeto(objeto, Classe);
+  } else {
+    objetoSelect = [converteObjeto(objeto, Classe)];
+  }
+  console.log(`Classe -> ${Classe}`);
+}
+
+
 export const executaInsert = async (
   Classe: any,
   objeto: Entidade,
@@ -42,11 +56,13 @@ export const executaInsert = async (
   let sqlInsert = '';
   let objetoInsert;
 
+  console.log("Objeto -> ",objeto);
   if (Array.isArray(objeto)) {
     objetoInsert = converteObjeto(objeto, Classe);
   } else {
     objetoInsert = [converteObjeto(objeto, Classe)];
   }
+  console.log("Objeto insert -> ", objetoInsert);
 
   const sql = new Map();
   if (sql.has('INSERT')) {
@@ -57,6 +73,9 @@ export const executaInsert = async (
   sqlInsert += construirInsert(Classe, objetoInsert, origem);
   sql.set('INSERT', sqlInsert);
   sqlInsert = `${sql.get('INSERT')};`;
+
+  console.log("SQL -> ", sql);
+  console.log("SqlInsert ->", sqlInsert);
 
   const db = await conexao();
   await db.query(sqlInsert);
